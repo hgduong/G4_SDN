@@ -30,7 +30,7 @@ const servicePackageSchema = new mongoose.Schema(
   {
     timestamps: {
       createdAt: true,   // Auto-generate createdAt
-      updatedAt: false   // You can set to true if you want auto-updatedAt too
+      updatedAt: true   // You can set to true if you want auto-updatedAt too
     }
   }
 );
