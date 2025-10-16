@@ -1,0 +1,19 @@
+header {
+    background-color: #4d5053; /* Màu nền tối */
+    color: white; /* Màu chữ trắng */
+    padding: 10px 20px; /* Padding cho header */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Bóng nhẹ dưới header */
+}   
+.navbarheader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Khoảng cách giữa các liên kết */
+    color:aliceblue;
+  
+}
+.logo {
+    font-weight: bold;
+    font-size: 24px;
+    margin-right: 500px;
+}

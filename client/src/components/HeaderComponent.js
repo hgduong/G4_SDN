@@ -1,16 +1,32 @@
 // File: Header.js
 import React from "react";
 import { Link } from "react-router-dom";
+import "../assets/style/header.css";
 
 function Header() {
   return (
-    <header className="bg-dark text-white py-3 shadow">
-      <div className="container d-flex justify-content-between align-items-center">
-        <h2 className="m-0">🎮 Gaming Center</h2>
-        <nav>
-          <Link className="text-white mx-3 text-decoration-none" to="/">Trang chủ</Link>
-          <Link className="text-white mx-3 text-decoration-none" to="/about">Giới thiệu</Link>
-          <Link className="text-white mx-3 text-decoration-none" to="/contact">Liên hệ</Link>
+    <header>
+      <div>
+        <nav className="navbarheader">
+          <h2 className="logo">🎮 Gaming Center Management</h2>
+          <Link className="navbarheader" to="/">
+            Trang chủ
+          </Link>
+          <Link className="navbarheader" to="/thong-tin-may">
+            Thông tin máy
+          </Link>
+          <Link className="navbarheader" to="/contact">
+            Dịch vụ đồ ăn
+          </Link>
+          <Link className="navbarheader" to="/">
+            Order
+          </Link>
+          <Link className="navbarheader" to="/danh-sach-tai-khoan-nguoi-dung">
+            Tài khoản người dùng
+          </Link>
+          <Link className="navbarheader" to="/contact">
+            Danh sách chặn
+          </Link>
         </nav>
       </div>
     </header>

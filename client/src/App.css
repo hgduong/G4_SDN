@@ -1,0 +1,15 @@
+/* File: App.css */
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* đảm bảo cao ít nhất = màn hình */
+}
+
+.layout-body {
+  flex: 1; /* phần body chiếm khoảng trống giữa header và footer */
+}
+
+footer {
+justify-items: center  ;
+  margin-top: auto; /* đẩy footer xuống cuối nếu nội dung ngắn */
+}

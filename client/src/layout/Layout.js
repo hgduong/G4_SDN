@@ -1,14 +1,14 @@
-// File: Layout.js
 import React from "react";
 import Header from "../components/HeaderComponent";
 import Footer from "../components/FooterComponent";
+import "../App.css";
 
 function Layout({ children }) {
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className="layout-wrapper">
       <Header />
-      <main className="flex-grow-1 container my-4">
-        {children}
+      <main className="layout-body">
+        <div className="container py-4">{children}</div>
       </main>
       <Footer />
     </div>
