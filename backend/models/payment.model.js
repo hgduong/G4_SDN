@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const paymentSchema = new mongoose.Schema(
   {
@@ -41,4 +41,4 @@ const paymentSchema = new mongoose.Schema(
   { timestamps: false } // dùng created_at thủ công
 );
 
-export default mongoose.model("Payment", paymentSchema);
+module.exports = mongoose.model("Payment", paymentSchema);

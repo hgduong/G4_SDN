@@ -1,4 +1,5 @@
-import ServiceOrder from "../models/service_order.model.js";
+const ServiceOrder = require("../models/service_order.model.js");
+const Payment = require("../models/payment.model.js");
 
 // Helper: calculate total price from service package and food items
 const calculateTotalPrice = (service_package, food_items = []) => {
@@ -13,7 +14,7 @@ const calculateTotalPrice = (service_package, food_items = []) => {
 };
 
 // 🔹 Lấy tất cả đơn dịch vụ (với lọc, phân trang đơn giản)
-export const getAllServiceOrders = async (req, res) => {
+const getAllServiceOrders = async (req, res) => {
   try {
     const { page = 1, limit = 20, status, customer_id } = req.query;
     const filter = {};
@@ -34,7 +35,7 @@ export const getAllServiceOrders = async (req, res) => {
 };
 
 // 🔹 Tạo đơn dịch vụ mới
-export const createServiceOrder = async (req, res) => {
+const createServiceOrder = async (req, res) => {
   try {
     const body = req.body;
 
@@ -59,7 +60,7 @@ export const createServiceOrder = async (req, res) => {
 };
 
 // 🔹 Lấy đơn theo ID
-export const getServiceOrderById = async (req, res) => {
+const getServiceOrderById = async (req, res) => {
   try {
     const order = await ServiceOrder.findById(req.params.id);
     if (!order) return res.status(404).json({ message: "ServiceOrder not found" });
@@ -70,16 +71,16 @@ export const getServiceOrderById = async (req, res) => {
 };
 
 // 🔹 Cập nhật đơn
-export const updateServiceOrder = async (req, res) => {
+const updateServiceOrder = async (req, res) => {
   try {
     const updates = req.body;
 
+    // Fetch existing order so we can detect status transitions and merge for price recalculation
+    const existing = await ServiceOrder.findById(req.params.id).lean();
+    if (!existing) return res.status(404).json({ message: "ServiceOrder not found" });
+
     // If service_package or food_items present in update, recalc total_price
     if (updates.service_package || updates.food_items) {
-      // fetch existing to merge
-      const existing = await ServiceOrder.findById(req.params.id).lean();
-      if (!existing) return res.status(404).json({ message: "ServiceOrder not found" });
-
       const mergedServicePackage = updates.service_package || existing.service_package;
       const mergedFoodItems = updates.food_items || existing.food_items || [];
       updates.total_price = calculateTotalPrice(mergedServicePackage, mergedFoodItems);
@@ -87,6 +88,36 @@ export const updateServiceOrder = async (req, res) => {
 
     const updated = await ServiceOrder.findByIdAndUpdate(req.params.id, updates, { new: true });
     if (!updated) return res.status(404).json({ message: "ServiceOrder not found" });
+
+    // When status transitions to 'serving' (sử dụng), create a Payment record based on the order
+    try {
+      const wasServing = existing.status === "serving";
+      const isNowServing = updated.status === "serving";
+      if (!wasServing && isNowServing) {
+        // Map service_order.payment.method (direct/indirect) to one of Payment.method enums
+        const mapMethod = (m) => {
+          if (!m) return "cash";
+          return m === "indirect" ? "card" : "cash";
+        };
+
+        const paymentPayload = {
+          payment_id: `PAY-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          user_id: updated.customer_id, // assumes customer_id stores User _id string
+          reservation_id: null,
+          amount: typeof updated.total_price === "number" ? updated.total_price : 0,
+          method: mapMethod(updated.payment && updated.payment.method),
+          status: updated.payment && updated.payment.status === "completed" ? "completed" : "pending",
+          created_at: new Date(),
+        };
+
+        const payment = new Payment(paymentPayload);
+        await payment.save();
+      }
+    } catch (paymentErr) {
+      // do not fail the update if payment creation fails; log for server-side inspection
+      console.error("Failed to create Payment for ServiceOrder", req.params.id, paymentErr);
+    }
+
     res.status(200).json(updated);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -94,7 +125,7 @@ export const updateServiceOrder = async (req, res) => {
 };
 
 // 🔹 Xóa đơn
-export const deleteServiceOrder = async (req, res) => {
+const deleteServiceOrder = async (req, res) => {
   try {
     const deleted = await ServiceOrder.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "ServiceOrder not found" });
@@ -104,7 +135,7 @@ export const deleteServiceOrder = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   getAllServiceOrders,
   getServiceOrderById,
   createServiceOrder,

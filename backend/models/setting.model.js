@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const settingSchema = new mongoose.Schema(
   {
@@ -44,4 +44,4 @@ const settingSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Setting", settingSchema);
+module.exports = mongoose.model("Setting", settingSchema);

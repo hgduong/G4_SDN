@@ -1,11 +1,5 @@
-import express from "express";
-import {
-  getAllUsageLogs,
-  getUsageLogById,
-  createUsageLog,
-  updateUsageLog,
-  deleteUsageLog,
-} from "../controllers/usage_log.controller.js";
+const express = require("express");
+const { getAllUsageLogs, getUsageLogById, createUsageLog, updateUsageLog, deleteUsageLog } = require("../controllers/usage_log.controller.js");
 
 const router = express.Router();
 
@@ -24,4 +18,4 @@ router.put("/:id", updateUsageLog);
 // 🔹 DELETE xóa usage log
 router.delete("/:id", deleteUsageLog);
 
-export default router;
+module.exports = router;
