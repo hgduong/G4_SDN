@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const usageLogSchema = new mongoose.Schema(
   {
@@ -30,4 +30,4 @@ const usageLogSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("UsageLog", usageLogSchema);
+module.exports = mongoose.model("UsageLog", usageLogSchema);

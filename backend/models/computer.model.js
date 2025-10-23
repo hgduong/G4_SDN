@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const computerSchema = new mongoose.Schema(
   {
@@ -31,4 +31,4 @@ const computerSchema = new mongoose.Schema(
 );
 
 // 🔹 Tự động thêm id tự sinh (MongoDB sẽ tự tạo _id)
-export default mongoose.model("Computer", computerSchema);
+module.exports = mongoose.model("Computer", computerSchema);

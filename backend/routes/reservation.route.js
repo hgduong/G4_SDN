@@ -1,11 +1,5 @@
-import express from "express";
-import {
-  getAllReservations,
-  getReservationById,
-  createReservation,
-  updateReservation,
-  deleteReservation,
-} from "../controllers/reservation.controller.js";
+const express = require("express");
+const { getAllReservations, getReservationById, createReservation, updateReservation, deleteReservation } = require("../controllers/reservation.controller.js");
 
 const router = express.Router();
 
@@ -24,4 +18,4 @@ router.put("/:id", updateReservation);
 // 🔹 DELETE xóa đặt chỗ
 router.delete("/:id", deleteReservation);
 
-export default router;
+module.exports = router;

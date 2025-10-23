@@ -1,11 +1,12 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   getAllPayments,
   getPaymentById,
   createPayment,
   updatePayment,
   deletePayment,
-} from "../controllers/payment.controller.js";
+  assignComputer,
+} = require("../controllers/payment.controller.js");
 
 const router = express.Router();
 
@@ -24,4 +25,7 @@ router.put("/:id", updatePayment);
 // 🔹 DELETE xóa thanh toán
 router.delete("/:id", deletePayment);
 
-export default router;
+// 🔹 POST gán máy cho payment đã hoàn thành
+router.post("/:id/assign-computer", assignComputer);
+
+module.exports = router;
