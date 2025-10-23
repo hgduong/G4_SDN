@@ -1,7 +1,10 @@
-import Payment from "../models/Payment.js";
+const Payment = require("../models/payment.model.js");
+const Computer = require("../models/computer.model.js");
+const UsageLog = require("../models/usage_log.model.js");
+const ServiceOrder = require("../models/service_order.model.js");
 
 // 🔹 Lấy tất cả thanh toán
-export const getAllPayments = async (req, res) => {
+const getAllPayments = async (req, res) => {
   try {
     const payments = await Payment.find().populate("user_id").populate("reservation_id");
     res.status(200).json(payments);
@@ -11,7 +14,7 @@ export const getAllPayments = async (req, res) => {
 };
 
 // 🔹 Tạo thanh toán mới
-export const createPayment = async (req, res) => {
+const createPayment = async (req, res) => {
   try {
     const payment = new Payment(req.body);
     await payment.save();
@@ -22,7 +25,7 @@ export const createPayment = async (req, res) => {
 };
 
 // 🔹 Lấy thanh toán theo ID
-export const getPaymentById = async (req, res) => {
+const getPaymentById = async (req, res) => {
   try {
     const payment = await Payment.findById(req.params.id)
       .populate("user_id")
@@ -35,7 +38,7 @@ export const getPaymentById = async (req, res) => {
 };
 
 // 🔹 Cập nhật thanh toán
-export const updatePayment = async (req, res) => {
+const updatePayment = async (req, res) => {
   try {
     const updated = await Payment.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ message: "Payment not found" });
@@ -46,7 +49,7 @@ export const updatePayment = async (req, res) => {
 };
 
 // 🔹 Xóa thanh toán
-export const deletePayment = async (req, res) => {
+const deletePayment = async (req, res) => {
   try {
     const deleted = await Payment.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "Payment not found" });
@@ -54,4 +57,79 @@ export const deletePayment = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+// 🔹 Gán máy cho user dựa trên payment đã hoàn thành
+// POST /api/payments/:id/assign-computer
+const assignComputer = async (req, res) => {
+  try {
+    const paymentId = req.params.id;
+    const { computer_id, service_order_id } = req.body;
+
+    const payment = await Payment.findById(paymentId);
+    if (!payment) return res.status(404).json({ message: "Payment not found" });
+
+    if (payment.status !== "completed") {
+      return res.status(400).json({ message: "Payment is not completed" });
+    }
+
+    if (!computer_id) return res.status(400).json({ message: "computer_id is required" });
+
+    const computer = await Computer.findById(computer_id);
+    if (!computer) return res.status(404).json({ message: "Computer not found" });
+
+    if (computer.status !== "available") {
+      return res.status(400).json({ message: "Computer is not available" });
+    }
+
+    // assign computer to user
+    computer.status = "in-use";
+    computer.current_user = {
+      user_id: payment.user_id,
+      username: payment.user_id, // best-effort; real username may be populated client-side
+    };
+    await computer.save();
+
+    // create usage log
+    const usageLog = new UsageLog({
+      user_id: payment.user_id,
+      computer_id: computer._id,
+      service_package_id: null,
+      start_time: new Date(),
+      session_status: "in-progress",
+    });
+    await usageLog.save();
+
+    // if service_order_id provided, update that order's computer info and status
+    if (service_order_id) {
+      try {
+        const order = await ServiceOrder.findById(service_order_id);
+        if (order) {
+          order.computer = {
+            computer_id: computer._id.toString(),
+            name: computer.computer_name,
+            location: computer.room,
+            specs: JSON.stringify(computer.specs),
+          };
+          order.status = "serving"; // mark as serving
+          await order.save();
+        }
+      } catch (e) {
+        console.error("Failed to update service order with computer assignment", e);
+      }
+    }
+
+    res.status(200).json({ message: "Computer assigned", computer, usageLog });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  getAllPayments,
+  createPayment,
+  getPaymentById,
+  updatePayment,
+  deletePayment,
+  assignComputer,
 };

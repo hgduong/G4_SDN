@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import Reservation from "../models/Reservation.js";
-import User from "../models/user.model.js";
-import Computer from "../models/computer.model.js";
+const mongoose = require("mongoose");
+const Reservation = require("../models/reservation.model.js");
+const User = require("../models/user.model.js");
+const Computer = require("../models/computer.model.js");
 
 const { Types } = mongoose;
 
@@ -15,7 +15,7 @@ const isObjectId = (id) => {
 };
 
 // 🔹 Lấy tất cả đặt chỗ (hỗ trợ filter và pagination cơ bản)
-export const getAllReservations = async (req, res) => {
+const getAllReservations = async (req, res) => {
   try {
     const { page = 1, limit = 50, user_id, computer_id, status } = req.query;
     const filter = {};
@@ -39,7 +39,7 @@ export const getAllReservations = async (req, res) => {
 };
 
 // 🔹 Tạo đặt chỗ mới với kiểm tra an toàn
-export const createReservation = async (req, res) => {
+const createReservation = async (req, res) => {
   try {
     const { user_id, computer_id, start_time, end_time, notes } = req.body;
 
@@ -97,7 +97,7 @@ export const createReservation = async (req, res) => {
 };
 
 // 🔹 Lấy đặt chỗ theo ID (an toàn)
-export const getReservationById = async (req, res) => {
+const getReservationById = async (req, res) => {
   try {
     const { id } = req.params;
     if (!isObjectId(id)) return res.status(400).json({ message: "Invalid id" });
@@ -112,7 +112,7 @@ export const getReservationById = async (req, res) => {
 };
 
 // 🔹 Cập nhật đặt chỗ với kiểm tra
-export const updateReservation = async (req, res) => {
+const updateReservation = async (req, res) => {
   try {
     const { id } = req.params;
     if (!isObjectId(id)) return res.status(400).json({ message: "Invalid id" });
@@ -166,7 +166,7 @@ export const updateReservation = async (req, res) => {
 };
 
 // 🔹 Xóa đặt chỗ
-export const deleteReservation = async (req, res) => {
+const deleteReservation = async (req, res) => {
   try {
     const { id } = req.params;
     if (!isObjectId(id)) return res.status(400).json({ message: "Invalid id" });
@@ -177,3 +177,5 @@ export const deleteReservation = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+module.exports = { getAllReservations, createReservation, getReservationById, updateReservation, deleteReservation };

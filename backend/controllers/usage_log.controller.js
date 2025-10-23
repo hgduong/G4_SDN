@@ -1,7 +1,7 @@
-import UsageLog from "../models/UsageLog.js";
+const UsageLog = require("../models/usage_log.model.js");
 
 // 🔹 Lấy tất cả usage logs
-export const getAllUsageLogs = async (req, res) => {
+const getAllUsageLogs = async (req, res) => {
   try {
     const logs = await UsageLog.find()
       .populate("user_id")
@@ -14,7 +14,7 @@ export const getAllUsageLogs = async (req, res) => {
 };
 
 // 🔹 Tạo usage log mới
-export const createUsageLog = async (req, res) => {
+const createUsageLog = async (req, res) => {
   try {
     const usageLog = new UsageLog(req.body);
     await usageLog.save();
@@ -25,7 +25,7 @@ export const createUsageLog = async (req, res) => {
 };
 
 // 🔹 Lấy usage log theo ID
-export const getUsageLogById = async (req, res) => {
+const getUsageLogById = async (req, res) => {
   try {
     const log = await UsageLog.findById(req.params.id)
       .populate("user_id")
@@ -39,7 +39,7 @@ export const getUsageLogById = async (req, res) => {
 };
 
 // 🔹 Cập nhật usage log
-export const updateUsageLog = async (req, res) => {
+const updateUsageLog = async (req, res) => {
   try {
     const updated = await UsageLog.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ message: "Usage log not found" });
@@ -50,7 +50,7 @@ export const updateUsageLog = async (req, res) => {
 };
 
 // 🔹 Xóa usage log
-export const deleteUsageLog = async (req, res) => {
+const deleteUsageLog = async (req, res) => {
   try {
     const deleted = await UsageLog.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "Usage log not found" });
@@ -59,3 +59,5 @@ export const deleteUsageLog = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+module.exports = { getAllUsageLogs, createUsageLog, getUsageLogById, updateUsageLog, deleteUsageLog };

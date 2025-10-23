@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 // ---- Food Item ----
@@ -60,4 +60,4 @@ const ServiceOrderSchema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("ServiceOrder", ServiceOrderSchema);
+module.exports = mongoose.model("ServiceOrder", ServiceOrderSchema);
