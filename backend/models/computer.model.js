@@ -5,7 +5,7 @@ const computerSchema = new mongoose.Schema(
     computer_name: { type: String, required: true },
     status: {
       type: String,
-      enum: ["available", "in-use", "maintenance"],
+      enum: ["available", "in-use", "maintenance", "reserved"],
       default: "available",
     },
     specs: {
