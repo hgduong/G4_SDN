@@ -3,6 +3,7 @@ const User = require('../models/user.model.js');
 const Computer = require('../models/computer.model.js');
 const UsageLog = require('../models/usage_log.model.js');
 const ServicePackage = require('../models/service_package.model.js');
+const MenuItem = require('../models/menu_item.model.js');
 
 const seedData = async () => {
   try {
@@ -15,10 +16,12 @@ const seedData = async () => {
     await Computer.deleteMany({});
     await UsageLog.deleteMany({});
     await ServicePackage.deleteMany({});
+    await MenuItem.deleteMany({});
 
     // Create sample users
     const users = await User.insertMany([
       {
+        id: 1,
         username: 'nguyenvana',
         password: 'password123',
         role: 'customer',
@@ -26,6 +29,7 @@ const seedData = async () => {
         email: 'nguyenvana@example.com'
       },
       {
+        id: 2,
         username: 'tranthib',
         password: 'password123',
         role: 'customer',
@@ -33,6 +37,7 @@ const seedData = async () => {
         email: 'tranthib@example.com'
       },
       {
+        id: 3,
         username: 'lehoangc',
         password: 'password123',
         role: 'customer',
@@ -44,6 +49,7 @@ const seedData = async () => {
     // Create sample computers
     const computers = await Computer.insertMany([
       {
+        computer_id: 1,
         computer_name: 'PC-001',
         status: 'available',
         specs: {
@@ -56,6 +62,7 @@ const seedData = async () => {
         room: 'VIP Room'
       },
       {
+        computer_id: 2,
         computer_name: 'PC-002',
         status: 'available',
         specs: {
@@ -68,6 +75,7 @@ const seedData = async () => {
         room: 'Gaming Room'
       },
       {
+        computer_id: 3,
         computer_name: 'PC-003',
         status: 'available',
         specs: {
@@ -80,6 +88,7 @@ const seedData = async () => {
         room: 'Standard Room'
       },
       {
+        computer_id: 4,
         computer_name: 'PC-004',
         status: 'in-use',
         specs: {
@@ -89,7 +98,11 @@ const seedData = async () => {
           storage: '2TB SSD'
         },
         hourly_rate: 100000,
-        room: 'Premium Room'
+        room: 'Premium Room',
+        current_user: {
+          user_id: users[2].id,
+          username: users[2].username
+        }
       }
     ]);
 
@@ -106,6 +119,40 @@ const seedData = async () => {
         description: 'Optimized for live streaming',
         price: 75000,
         isActive: true
+      }
+    ]);
+
+    // Create sample menu items
+    const menuItems = await MenuItem.insertMany([
+      {
+        name: 'French Fries',
+        price: 25000,
+        category: 'food'
+      },
+      {
+        name: 'Pepsi Can',
+        price: 15000,
+        category: 'drink'
+      },
+      {
+        name: 'Burger',
+        price: 45000,
+        category: 'food'
+      },
+      {
+        name: 'Coffee',
+        price: 20000,
+        category: 'drink'
+      },
+      {
+        name: 'Pizza Slice',
+        price: 35000,
+        category: 'food'
+      },
+      {
+        name: 'Water Bottle',
+        price: 10000,
+        category: 'drink'
       }
     ]);
 
@@ -171,7 +218,7 @@ const seedData = async () => {
     ]);
 
     console.log('Sample data seeded successfully!');
-    console.log(`Created ${users.length} users, ${computers.length} computers, ${servicePackages.length} service packages, and ${usageLogs.length} usage logs`);
+    console.log(`Created ${users.length} users, ${computers.length} computers, ${servicePackages.length} service packages, ${menuItems.length} menu items, and ${usageLogs.length} usage logs`);
 
   } catch (error) {
     console.error('Error seeding data:', error);

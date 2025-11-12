@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const computerSchema = new mongoose.Schema(
   {
+    computer_id: { type: Number, required: true, unique: true },
     computer_name: { type: String, required: true },
     status: {
       type: String,
@@ -18,7 +19,7 @@ const computerSchema = new mongoose.Schema(
 
     // Người dùng hiện tại (nếu đang "in-use")
     current_user: {
-      user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+      user_id: { type: Number, default: null },
       username: { type: String, default: null },
     },
 

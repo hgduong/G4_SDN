@@ -11,7 +11,7 @@ function Header() {
         <ul className="menu">
           <li><NavLink to="/" end>Trang chủ</NavLink></li>
           <li><NavLink to="/thong-tin-may">Thông tin máy</NavLink></li>
-          <li><NavLink to="/contact">Dịch vụ đồ ăn</NavLink></li>
+          <li><NavLink to="/contact">Package</NavLink></li>
           <li><NavLink to="/order">Order</NavLink></li>
           <li><NavLink to="/danh-sach-tai-khoan-nguoi-dung">Tài khoản người dùng</NavLink></li>
           <li><NavLink to="/xu-ly-thanh-toan">Xử lý thanh toán</NavLink></li>
