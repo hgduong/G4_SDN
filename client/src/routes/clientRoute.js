@@ -7,6 +7,7 @@ import ComputerPage from "../pages/ComputerPage";
 import ChooseComputerPage from "../pages/ChooseComputerPage";
 import AccountPage from "../pages/AccountPage";
 import ReservationPage from "../pages/ReservationPage";
+import PaymentPage from "../pages/PaymentPage";
 
 // Route dành cho client (người dùng)
 function ClientRoutes() {
@@ -18,6 +19,7 @@ function ClientRoutes() {
   <Route path="/chon-may" element={<ChooseComputerPage />} />
         <Route path="/dat-cho" element={<ReservationPage />} />
         <Route path="/danh-sach-tai-khoan-nguoi-dung" element={<AccountPage />} />
+        <Route path="/xu-ly-thanh-toan" element={<PaymentPage />} />
       </Routes>
     </Layout>
   );
