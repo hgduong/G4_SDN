@@ -8,6 +8,9 @@ const usageLogRoutes = require("./routes/usage_log.route");
 const computerRoutes = require("./routes/computer.route");
 const notificationRouter = require("./routes/notification.route");
 const servicePackageRoutes = require("./routes/service_package.routes");
+const serviceOrderRoutes = require("./routes/service_order.routes");
+const userRoutes = require("./routes/user.route");
+const menuItemRoutes = require("./routes/menu_item.route");
 
 const app = express();
 connectDB();
@@ -20,6 +23,9 @@ app.use("/api/usage-logs", usageLogRoutes);
 app.use("/api/computers", computerRoutes);
 app.use("/api/notifications", notificationRouter);
 app.use("/api/service-packages", servicePackageRoutes);
+app.use("/api/service-orders", serviceOrderRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/menu-items", menuItemRoutes);
 const PORT = process.env.PORT || 9999;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

@@ -152,6 +152,92 @@ const api = {
       throw error;
     }
   },
+
+  getAllUsers: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users`);
+      if (!response.ok) throw new Error('Failed to fetch users');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      throw error;
+    }
+  },
+
+  getAllMenuItems: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/menu-items`);
+      if (!response.ok) throw new Error('Failed to fetch menu items');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching menu items:', error);
+      throw error;
+    }
+  },
+
+  getAllServiceOrders: async (params = {}) => {
+    try {
+      const query = new URLSearchParams(params).toString();
+      const url = query ? `${API_BASE_URL}/service-orders?${query}` : `${API_BASE_URL}/service-orders`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch service orders');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching service orders:', error);
+      throw error;
+    }
+  },
+
+  getServiceOrderById: async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/service-orders/${id}`);
+      if (!response.ok) throw new Error('Failed to fetch service order');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching service order:', error);
+      throw error;
+    }
+  },
+
+  updateServiceOrder: async (id, updates) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/service-orders/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update service order');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating service order:', error);
+      throw error;
+    }
+  },
+
+  createServiceOrder: async (orderData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/service-orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create service order');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error creating service order:', error);
+      throw error;
+    }
+  },
 };
 
 export default api;
