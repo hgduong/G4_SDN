@@ -1,6 +1,50 @@
-footer{
-    background-color: #4d5053; /* Màu nền tối */
-    color: white; /* Màu chữ trắng */
-    padding: 10px 20px; /* Padding cho header */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Bóng nhẹ dưới header */
+/* Gaming Center Footer Styles */
+footer {
+    background-color: #050510;
+    color: #C5C6C7;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    border-top: 1px solid rgba(0, 255, 255, 0.3);
+    box-shadow: 0 -4px 20px rgba(0, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #00FFFF, transparent);
+    animation: footerGlow 4s ease-in-out infinite;
+}
+
+@keyframes footerGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.footer-content {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-content:hover {
+    color: #00FFFF;
+    text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
 }

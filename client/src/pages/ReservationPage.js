@@ -88,42 +88,42 @@ const ReservationPage = () => {
   const availableRooms = [...new Set(computers.map(c => c.room))];
   const availableComputers = computers.filter(c => c.room === formData.room);
 
-  if (loading) return <div>Đang tải...</div>;
+  if (loading) return <div className="text-red-300">Đang tải...</div>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">Đặt chỗ máy tính</h2>
+    <div className="max-w-2xl mx-auto p-6 text-red-300">
+      <h2 className="text-2xl font-bold mb-6 text-red-300">Đặt chỗ máy tính</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Chọn phòng:</label>
+          <label className="block text-sm font-medium mb-1 text-red-300">Chọn phòng:</label>
           <select
             name="room"
             value={formData.room}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded text-red-300"
             required
           >
-            <option value="">Chọn phòng</option>
+            <option value="" className="text-red-300">Chọn phòng</option>
             {availableRooms.map(room => (
-              <option key={room} value={room}>{room}</option>
+              <option key={room} value={room} className="text-red-300">{room}</option>
             ))}
           </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Chọn máy:</label>
+          <label className="block text-sm font-medium mb-1 text-red-300">Chọn máy:</label>
           <select
             name="computer_name"
             value={formData.computer_name}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded text-red-300"
             required
             disabled={!formData.room}
           >
-            <option value="">Chọn máy</option>
+            <option value="" className="text-red-300">Chọn máy</option>
             {availableComputers.map(comp => (
-              <option key={comp._id} value={comp.computer_name}>
+              <option key={comp._id} value={comp.computer_name} className="text-red-300">
                 {comp.computer_name} - {comp.specs.cpu} - {comp.hourly_rate} VND/giờ
               </option>
             ))}
@@ -131,19 +131,19 @@ const ReservationPage = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Thời gian bắt đầu:</label>
+          <label className="block text-sm font-medium mb-1 text-red-300">Thời gian bắt đầu:</label>
           <input
             type="datetime-local"
             name="start_time"
             value={formData.start_time}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded text-red-300"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Số giờ sử dụng (1-12):</label>
+          <label className="block text-sm font-medium mb-1 text-red-300">Số giờ sử dụng (1-12):</label>
           <input
             type="number"
             name="duration_hours"
@@ -151,22 +151,22 @@ const ReservationPage = () => {
             onChange={handleInputChange}
             min="1"
             max="12"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded text-red-300"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Gói dịch vụ (tùy chọn):</label>
+          <label className="block text-sm font-medium mb-1 text-red-300">Gói dịch vụ (tùy chọn):</label>
           <select
             name="service_package_id"
             value={formData.service_package_id}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded text-red-300"
           >
-            <option value="">Không chọn gói</option>
+            <option value="" className="text-red-300">Không chọn gói</option>
             {servicePackages.filter(p => p.isActive).map(pkg => (
-              <option key={pkg._id} value={pkg._id}>
+              <option key={pkg._id} value={pkg._id} className="text-red-300">
                 {pkg.name} - {pkg.price} VND
               </option>
             ))}
@@ -174,13 +174,13 @@ const ReservationPage = () => {
         </div>
 
         <div className="bg-gray-100 p-4 rounded">
-          <h3 className="font-semibold">Chi phí ước tính: {estimatedCost} VND</h3>
+          <h3 className="font-semibold text-red-300">Chi phí ước tính: {estimatedCost} VND</h3>
         </div>
 
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:opacity-50"
+          className="w-full bg-blue-500 text-red-300 py-2 px-4 rounded hover:bg-blue-600 disabled:opacity-50"
         >
           {submitting ? "Đang xử lý..." : "Xác nhận đặt chỗ"}
         </button>
