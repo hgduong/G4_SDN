@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Reservation = require("../models/reservation.model.js");
 const User = require("../models/user.model.js");
 const Computer = require("../models/computer.model.js");
+const ServicePackage = require("../models/service_package.model.js");
+const Setting = require("../models/setting.model.js");
 
 const { Types } = mongoose;
 
@@ -20,13 +22,13 @@ const getAllReservations = async (req, res) => {
     const { page = 1, limit = 50, user_id, computer_id, status } = req.query;
     const filter = {};
     if (user_id && isObjectId(user_id)) filter.user_id = user_id;
-    if (computer_id && isObjectId(computer_id)) filter.computer_id = computer_id;
+    if (computer_id) filter.computer_id = computer_id;
     if (status) filter.status = status;
 
     const skip = (Math.max(1, Number(page)) - 1) * Number(limit);
     const reservations = await Reservation.find(filter)
       .populate("user_id", "username email")
-      .populate("computer_id", "computer_name status room")
+      .populate("service_package_id", "name price")
       .sort({ start_time: -1 })
       .skip(skip)
       .limit(Number(limit))
@@ -41,56 +43,104 @@ const getAllReservations = async (req, res) => {
 // 🔹 Tạo đặt chỗ mới với kiểm tra an toàn
 const createReservation = async (req, res) => {
   try {
-    const { user_id, computer_id, start_time, end_time, notes } = req.body;
+    const { user_id, room, computer_name, start_time, duration_hours, service_package_id, notes } = req.body;
 
     // Basic validation
-    if (!user_id || !computer_id || !start_time || !end_time) {
-      return res.status(400).json({ message: "user_id, computer_id, start_time and end_time are required" });
+    if (!user_id || !room || !computer_name || !start_time || !duration_hours) {
+      return res.status(400).json({ message: "user_id, room, computer_name, start_time and duration_hours are required" });
     }
 
-    if (!isObjectId(user_id) || !isObjectId(computer_id)) {
-      return res.status(400).json({ message: "Invalid user_id or computer_id" });
+    if (!isObjectId(user_id)) {
+      return res.status(400).json({ message: "Invalid user_id" });
+    }
+
+    if (service_package_id && !isObjectId(service_package_id)) {
+      return res.status(400).json({ message: "Invalid service_package_id" });
     }
 
     const start = new Date(start_time);
-    const end = new Date(end_time);
-    if (isNaN(start) || isNaN(end) || start >= end) {
-      return res.status(400).json({ message: "Invalid start_time/end_time: ensure start < end and proper dates" });
+    const currentTime = new Date();
+    if (isNaN(start) || start <= currentTime) {
+      return res.status(400).json({ message: "Invalid start_time: must be a future date" });
     }
+
+    if (duration_hours <= 0 || duration_hours > 12) {
+      return res.status(400).json({ message: "Invalid duration_hours: must be > 0 and <= 12" });
+    }
+
+    const end = new Date(start.getTime() + duration_hours * 60 * 60 * 1000);
 
     // Existence checks
     const [user, computer] = await Promise.all([
       User.findById(user_id).lean(),
-      Computer.findById(computer_id).lean(),
+      Computer.findOne({ computer_name, room, status: "available" }).lean(),
     ]);
     if (!user) return res.status(404).json({ message: "User not found" });
-    if (!computer) return res.status(404).json({ message: "Computer not found" });
+    if (!computer) return res.status(404).json({ message: "Computer not found or not available" });
 
-    // Optionally: check computer availability during the requested slot
+    // Check overlapping reservations
     const overlapping = await Reservation.findOne({
-      computer_id: computer_id,
+      computer_id: computer_name,
       $or: [
         { start_time: { $lt: end }, end_time: { $gt: start } },
       ],
-      status: { $in: ["pending", "confirmed"] },
+      status: { $in: ["pending", "confirmed", "reserved"] },
     }).lean();
     if (overlapping) {
-      return res.status(409).json({ message: "Computer is already reserved for the requested time range" });
+      return res.status(409).json({ message: "⚠ This computer is already reserved at that time." });
     }
 
-    // create reservation_id if not provided
-    const reservation_id = req.body.reservation_id || `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    // Get settings
+    const settings = await Setting.findOne().lean() || { pricing: { base_rate_per_hour: 10000 } };
+
+    // Calculate cost
+    let estimated_cost = duration_hours * computer.hourly_rate;
+
+    let servicePackage = null;
+    if (service_package_id) {
+      servicePackage = await ServicePackage.findById(service_package_id).lean();
+      if (!servicePackage || !servicePackage.isActive) {
+        return res.status(400).json({ message: "Invalid or inactive service package" });
+      }
+      estimated_cost += servicePackage.price;
+    }
+
+    // Check user balance
+    if (user.balance < estimated_cost) {
+      return res.status(400).json({ message: "💰 Please top up your account before reserving." });
+    }
+
+    // Create reservation_id
+    const reservation_id = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
     const reservation = new Reservation({
       reservation_id,
       user_id,
-      computer_id,
+      computer_id: computer_name,
+      room,
       start_time: start,
       end_time: end,
+      estimated_cost,
+      service_package_id: service_package_id || null,
       notes,
     });
     await reservation.save();
-    res.status(201).json(reservation);
+
+    // Update computer status to reserved
+    await Computer.findByIdAndUpdate(computer._id, { status: "reserved" });
+
+    res.status(201).json({
+      reservation,
+      message: "Reservation created successfully",
+      summary: {
+        reservation_id,
+        computer_name,
+        room,
+        start_time: start,
+        end_time: end,
+        estimated_cost
+      }
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -103,7 +153,7 @@ const getReservationById = async (req, res) => {
     if (!isObjectId(id)) return res.status(400).json({ message: "Invalid id" });
     const reservation = await Reservation.findById(id)
       .populate("user_id", "username email")
-      .populate("computer_id", "computer_name status room");
+      .populate("service_package_id", "name price");
     if (!reservation) return res.status(404).json({ message: "Reservation not found" });
     res.status(200).json(reservation);
   } catch (error) {
@@ -119,16 +169,15 @@ const updateReservation = async (req, res) => {
 
     const updates = { ...req.body };
 
-    // If updating user_id/computer_id, validate format and existence
+    // If updating user_id, validate
     if (updates.user_id && !isObjectId(updates.user_id)) return res.status(400).json({ message: "Invalid user_id" });
-    if (updates.computer_id && !isObjectId(updates.computer_id)) return res.status(400).json({ message: "Invalid computer_id" });
 
     if (updates.user_id) {
       const u = await User.findById(updates.user_id).lean();
       if (!u) return res.status(404).json({ message: "User not found" });
     }
     if (updates.computer_id) {
-      const c = await Computer.findById(updates.computer_id).lean();
+      const c = await Computer.findOne({ computer_name: updates.computer_id }).lean();
       if (!c) return res.status(404).json({ message: "Computer not found" });
     }
 
@@ -150,7 +199,7 @@ const updateReservation = async (req, res) => {
         $or: [
           { start_time: { $lt: end }, end_time: { $gt: start } },
         ],
-        status: { $in: ["pending", "confirmed"] },
+        status: { $in: ["pending", "confirmed", "reserved"] },
       }).lean();
       if (overlapping) {
         return res.status(409).json({ message: "Computer is already reserved for the requested time range" });

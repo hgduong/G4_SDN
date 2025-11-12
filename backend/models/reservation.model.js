@@ -14,8 +14,11 @@ const reservationSchema = new mongoose.Schema(
       required: true
     },
     computer_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Computer",
+      type: String,
+      required: true
+    },
+    room: {
+      type: String,
       required: true
     },
     start_time: {
@@ -28,8 +31,18 @@ const reservationSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "cancelled", "completed"],
-      default: "pending"
+      enum: ["pending", "confirmed", "cancelled", "completed", "reserved"],
+      default: "reserved"
+    },
+    estimated_cost: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+    service_package_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ServicePackage",
+      default: null
     },
     notes: {
       type: String,
