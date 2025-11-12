@@ -7,9 +7,38 @@
 
 .layout-body {
   flex: 1; /* phần body chiếm khoảng trống giữa header và footer */
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 footer {
-justify-items: center  ;
+  justify-items: center;
   margin-top: auto; /* đẩy footer xuống cuối nếu nội dung ngắn */
+}
+
+/* Page transition effect */
+.page-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
