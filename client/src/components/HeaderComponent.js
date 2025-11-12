@@ -24,6 +24,9 @@ function Header() {
           <Link className="navbarheader" to="/danh-sach-tai-khoan-nguoi-dung">
             Tài khoản người dùng
           </Link>
+          <Link className="navbarheader" to="/xu-ly-thanh-toan">
+            Xử lý thanh toán
+          </Link>
           <Link className="navbarheader" to="/contact">
             Danh sách chặn
           </Link>

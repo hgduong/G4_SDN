@@ -110,6 +110,48 @@ const api = {
       throw error;
     }
   },
+
+  processPayment: async (paymentData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/payments/process`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(paymentData),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to process payment');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error processing payment:', error);
+      throw error;
+    }
+  },
+
+  getAllPayments: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/payments`);
+      if (!response.ok) throw new Error('Failed to fetch payments');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching payments:', error);
+      throw error;
+    }
+  },
+
+  getUsageLogs: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/usage-logs`);
+      if (!response.ok) throw new Error('Failed to fetch usage logs');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching usage logs:', error);
+      throw error;
+    }
+  },
 };
 
 export default api;
