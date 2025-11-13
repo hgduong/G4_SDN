@@ -13,15 +13,18 @@ import ServiceOrdersPage from "../pages/ServiceOrdersPage";
 import PackagePage from "../pages/PackagePage";
 import NotificationCenterPage from "../pages/NotificationCenterPage";
 import NotificationManagementPage from "../pages/NotificationManagementPage";
+import Login from "../pages/Login";   
+import Register from "../pages/Register";   
 
 // Route dành cho client (người dùng)
 function ClientRoutes() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-  <Route path="/thong-tin-may" element={<ComputerPage />} />
-  <Route path="/chon-may" element={<ChooseComputerPage />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/thong-tin-may" element={<ComputerPage />} />
+        <Route path="/chon-may" element={<ChooseComputerPage />} />
         <Route path="/dat-cho" element={<ReservationPage />} />
         <Route path="/danh-sach-tai-khoan-nguoi-dung" element={<AccountPage />} />
         <Route path="/xu-ly-thanh-toan" element={<PaymentPage />} />
@@ -30,6 +33,8 @@ function ClientRoutes() {
         <Route path="/package" element={<PackagePage />} />
         <Route path="/notifications" element={<NotificationCenterPage />} />
         <Route path="/admin/notifications" element={<NotificationManagementPage />} />
+        <Route path="/login" element={<Login />} />  
+         <Route path="/register" element={<Register />} />  
       </Routes>
     </Layout>
   );

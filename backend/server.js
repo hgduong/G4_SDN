@@ -11,7 +11,7 @@ const servicePackageRoutes = require("./routes/service_package.routes");
 const serviceOrderRoutes = require("./routes/service_order.routes");
 const userRoutes = require("./routes/user.route");
 const menuItemRoutes = require("./routes/menu_item.route");
-
+const authRoutes = require("./routes/auth.route.js");
 const app = express();
 connectDB();
 app.use(cors());
@@ -26,6 +26,7 @@ app.use("/api/service-packages", servicePackageRoutes);
 app.use("/api/service-orders", serviceOrderRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/menu-items", menuItemRoutes);
+app.use("/api/auth",authRoutes)
 const PORT = process.env.PORT || 9999;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
