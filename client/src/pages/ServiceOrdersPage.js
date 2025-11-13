@@ -207,7 +207,6 @@ function ServiceOrdersPage() {
                   <th className="border border-cyan-500 px-4 py-3 text-cyan-400">Total Price</th>
                   <th className="border border-cyan-500 px-4 py-3 text-cyan-400">Status</th>
                   <th className="border border-cyan-500 px-4 py-3 text-cyan-400">Order Time</th>
-                  <th className="border border-cyan-500 px-4 py-3 text-cyan-400">Staff ID</th>
                   <th className="border border-cyan-500 px-4 py-3 text-cyan-400">Actions</th>
                 </tr>
               </thead>
@@ -219,7 +218,6 @@ function ServiceOrdersPage() {
                     <td className="border border-cyan-500 px-4 py-2 text-white">{order.total_price} VND</td>
                     <td className="border border-cyan-500 px-4 py-2 text-white">{statusMap[order.status]}</td>
                     <td className="border border-cyan-500 px-4 py-2 text-white">{new Date(order.order_time).toLocaleString()}</td>
-                    <td className="border border-cyan-500 px-4 py-2 text-white">{order.staff_id || "N/A"}</td>
                     <td className="border border-cyan-500 px-4 py-2">{getActions(order)}</td>
                   </tr>
                 ))}

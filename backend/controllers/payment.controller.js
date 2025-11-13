@@ -2,6 +2,7 @@ const Payment = require("../models/payment.model.js");
 const Computer = require("../models/computer.model.js");
 const UsageLog = require("../models/usage_log.model.js");
 const ServiceOrder = require("../models/service_order.model.js");
+const Notification = require("../models/notification.model.js");
 
 // 🔹 Lấy tất cả thanh toán
 const getAllPayments = async (req, res) => {
@@ -125,6 +126,52 @@ const assignComputer = async (req, res) => {
   }
 };
 
+// 🔹 Xử lý thanh toán
+const processPayment = async (req, res) => {
+  try {
+    const { user_id, amount, method, description } = req.body;
+
+    if (!user_id || !amount || !method) {
+      return res.status(400).json({ message: "user_id, amount, and method are required" });
+    }
+
+    // Generate payment_id
+    const payment_id = `PAY-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+    // Create payment record
+    const payment = new Payment({
+      payment_id,
+      user_id,
+      amount,
+      method,
+      status: "completed" // Assuming successful for now
+    });
+    await payment.save();
+
+    // Send notification to user
+    try {
+      const notification = new Notification({
+        noti_id: `NOTI-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        user_id,
+        title: "Payment Successful",
+        message: `Your payment of ${amount} VND has been processed successfully.`,
+        type: "system"
+      });
+      await notification.save();
+    } catch (notifError) {
+      console.error("Failed to create payment notification:", notifError);
+      // Don't fail the payment if notification fails
+    }
+
+    res.status(201).json({
+      message: "Payment processed successfully",
+      payment
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAllPayments,
   createPayment,
@@ -132,4 +179,5 @@ module.exports = {
   updatePayment,
   deletePayment,
   assignComputer,
+  processPayment,
 };

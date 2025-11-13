@@ -6,6 +6,7 @@ const {
   updatePayment,
   deletePayment,
   assignComputer,
+  processPayment,
 } = require("../controllers/payment.controller.js");
 
 const router = express.Router();
@@ -27,5 +28,8 @@ router.delete("/:id", deletePayment);
 
 // 🔹 POST gán máy cho payment đã hoàn thành
 router.post("/:id/assign-computer", assignComputer);
+
+// 🔹 POST xử lý thanh toán
+router.post("/process", processPayment);
 
 module.exports = router;

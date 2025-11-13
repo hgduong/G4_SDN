@@ -11,7 +11,7 @@ const reservationSchema = new mongoose.Schema(
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: false
     },
     computer_id: {
       type: String,
@@ -47,6 +47,15 @@ const reservationSchema = new mongoose.Schema(
     notes: {
       type: String,
       trim: true
+    },
+    customer_name: {
+      type: String,
+      trim: true,
+      required: true
+    },
+    already_paid: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }

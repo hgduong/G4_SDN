@@ -4,6 +4,7 @@ const User = require("../models/user.model.js");
 const Computer = require("../models/computer.model.js");
 const ServicePackage = require("../models/service_package.model.js");
 const Setting = require("../models/setting.model.js");
+const Notification = require("../models/notification.model.js");
 
 const { Types } = mongoose;
 
@@ -24,15 +25,28 @@ const getAllReservations = async (req, res) => {
     if (user_id && isObjectId(user_id)) filter.user_id = user_id;
     if (computer_id) filter.computer_id = computer_id;
     if (status) filter.status = status;
+    // Don't filter by user_id if it's empty or invalid
 
     const skip = (Math.max(1, Number(page)) - 1) * Number(limit);
     const reservations = await Reservation.find(filter)
-      .populate("user_id", "username email")
       .populate("service_package_id", "name price")
       .sort({ start_time: -1 })
       .skip(skip)
       .limit(Number(limit))
       .lean();
+
+    // Manually populate user data for reservations that have user_id
+    for (let reservation of reservations) {
+      if (reservation.user_id && isObjectId(reservation.user_id)) {
+        try {
+          const user = await User.findById(reservation.user_id).select("username email").lean();
+          reservation.user_id = user;
+        } catch (error) {
+          // If user not found, keep user_id as is
+          console.log(`User not found for reservation: ${reservation._id}`);
+        }
+      }
+    }
     const total = await Reservation.countDocuments(filter);
     res.status(200).json({ data: reservations, meta: { total, page: Number(page), limit: Number(limit) } });
   } catch (error) {
@@ -43,14 +57,15 @@ const getAllReservations = async (req, res) => {
 // 🔹 Tạo đặt chỗ mới với kiểm tra an toàn
 const createReservation = async (req, res) => {
   try {
-    const { user_id, room, computer_name, start_time, duration_hours, service_package_id, notes } = req.body;
+    const { user_id, room, computer_name, start_time, duration_hours, service_package_id, notes, customer_name, already_paid } = req.body;
 
     // Basic validation
-    if (!user_id || !room || !computer_name || !start_time || !duration_hours) {
-      return res.status(400).json({ message: "user_id, room, computer_name, start_time and duration_hours are required" });
+    if (!room || !computer_name || !start_time || !duration_hours || !customer_name) {
+      return res.status(400).json({ message: "room, computer_name, start_time, duration_hours and customer_name are required" });
     }
 
-    if (!isObjectId(user_id)) {
+    // Optional user_id validation
+    if (user_id && !isObjectId(user_id)) {
       return res.status(400).json({ message: "Invalid user_id" });
     }
 
@@ -71,11 +86,13 @@ const createReservation = async (req, res) => {
     const end = new Date(start.getTime() + duration_hours * 60 * 60 * 1000);
 
     // Existence checks
-    const [user, computer] = await Promise.all([
-      User.findById(user_id).lean(),
-      Computer.findOne({ computer_name, room, status: "available" }).lean(),
-    ]);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    let user = null;
+    if (user_id) {
+      user = await User.findById(user_id).lean();
+      if (!user) return res.status(404).json({ message: "User not found" });
+    }
+
+    const computer = await Computer.findOne({ computer_name, room, status: "available" }).lean();
     if (!computer) return res.status(404).json({ message: "Computer not found or not available" });
 
     // Check overlapping reservations
@@ -105,8 +122,8 @@ const createReservation = async (req, res) => {
       estimated_cost += servicePackage.price;
     }
 
-    // Check user balance
-    if (user.balance < estimated_cost) {
+    // Check user balance (only if user_id is provided)
+    if (user && user.balance < estimated_cost) {
       return res.status(400).json({ message: "💰 Please top up your account before reserving." });
     }
 
@@ -115,7 +132,7 @@ const createReservation = async (req, res) => {
 
     const reservation = new Reservation({
       reservation_id,
-      user_id,
+      user_id: user_id || null,
       computer_id: computer_name,
       room,
       start_time: start,
@@ -123,11 +140,30 @@ const createReservation = async (req, res) => {
       estimated_cost,
       service_package_id: service_package_id || null,
       notes,
+      customer_name,
+      already_paid: already_paid || false,
     });
     await reservation.save();
 
     // Update computer status to reserved
     await Computer.findByIdAndUpdate(computer._id, { status: "reserved" });
+
+    // Send notification to user if user_id is provided
+    if (user_id) {
+      try {
+        const notification = new Notification({
+          noti_id: `NOTI-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          user_id,
+          title: "Reservation Confirmed",
+          message: `Your reservation for ${computer_name} in room ${room} has been confirmed. Start time: ${start.toLocaleString()}`,
+          type: "system"
+        });
+        await notification.save();
+      } catch (notifError) {
+        console.error("Failed to create notification:", notifError);
+        // Don't fail the reservation if notification fails
+      }
+    }
 
     res.status(201).json({
       reservation,
