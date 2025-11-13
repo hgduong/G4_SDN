@@ -11,7 +11,9 @@ const ReservationPage = () => {
     computer_name: "",
     start_time: "",
     duration_hours: 1,
-    service_package_id: ""
+    service_package_id: "",
+    customer_name: "",
+    already_paid: false
   });
   const [estimatedCost, setEstimatedCost] = useState(0);
   const [submitting, setSubmitting] = useState(false);
@@ -67,12 +69,13 @@ const ReservationPage = () => {
     setSubmitting(true);
     try {
       const payload = {
-        user_id: "671f4a50e5d9d70012fa0001", // Mock user ID, should get from auth
         room: formData.room,
         computer_name: formData.computer_name,
         start_time: formData.start_time,
         duration_hours: parseInt(formData.duration_hours),
-        service_package_id: formData.service_package_id || undefined
+        service_package_id: formData.service_package_id || undefined,
+        customer_name: formData.customer_name.trim(),
+        already_paid: formData.already_paid
       };
 
       const result = await api.createReservation(payload);
@@ -175,6 +178,33 @@ const ReservationPage = () => {
 
         <div className="bg-gray-100 p-4 rounded">
           <h3 className="font-semibold text-red-300">Chi phí ước tính: {estimatedCost} VND</h3>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1 text-red-300">Tên khách hàng:</label>
+          <input
+            type="text"
+            name="customer_name"
+            value={formData.customer_name}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded text-red-300"
+            placeholder="Nhập tên khách hàng"
+            required
+          />
+        </div>
+
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="already_paid"
+            name="already_paid"
+            checked={formData.already_paid}
+            onChange={(e) => setFormData(prev => ({ ...prev, already_paid: e.target.checked }))}
+            className="mr-2"
+          />
+          <label htmlFor="already_paid" className="text-sm text-red-300">
+            Đã thanh toán
+          </label>
         </div>
 
         <button

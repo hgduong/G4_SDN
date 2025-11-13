@@ -1,70 +1,217 @@
-# G4_SDN# Getting Started with Create React App
+# Gaming Center Management System (G4_SDN)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Hệ thống quản lý trung tâm game G4_SDN - một nền tảng toàn diện để quản lý máy tính, đặt chỗ, thanh toán và thông báo trong trung tâm game.
 
-## Available Scripts
+## 🚀 Cách Khởi Động Trang Web
 
-In the project directory, you can run:
+### Yêu cầu hệ thống
+- Node.js (phiên bản 14 trở lên)
+- MongoDB
+- npm hoặc yarn
 
-### `npm start`
+### 1. Cài đặt dependencies
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+# Cài đặt backend
+cd backend
+npm install
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+# Cài đặt frontend
+cd ../client
+npm install
+```
 
-### `npm test`
+### 2. Cấu hình cơ sở dữ liệu
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Đảm bảo MongoDB đang chạy và cập nhật thông tin kết nối trong file `backend/config/db.js` nếu cần.
 
-### `npm run build`
+### 3. Khởi động server
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+# Terminal 1: Khởi động backend server
+cd backend
+npm start
+# Server sẽ chạy tại http://localhost:9999
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Terminal 2: Khởi động frontend
+cd ../client
+npm start
+# Frontend sẽ chạy tại http://localhost:3000
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 4. Truy cập trang web
 
-### `npm run eject`
+Mở trình duyệt và truy cập: http://localhost:3000
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 📋 Chức Năng Chính
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 👤 Chức năng dành cho Người dùng
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### 1. **Quản lý Máy tính**
+- Xem danh sách máy tính có sẵn theo phòng
+- Thông tin chi tiết về cấu hình máy (CPU, GPU, RAM, SSD)
+- Trạng thái máy: available, reserved, in-use
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### 2. **Đặt chỗ Máy tính**
+- Đặt máy theo thời gian và phòng
+- Chọn gói dịch vụ bổ sung
+- Tính toán tự động chi phí
+- Kiểm tra xung đột đặt chỗ
 
-## Learn More
+#### 3. **Quản lý Thanh toán**
+- Xử lý thanh toán cho đặt chỗ
+- Hỗ trợ nhiều phương thức: tiền mặt, thẻ, ví điện tử
+- Lịch sử thanh toán
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### 4. **Trung tâm Thông báo**
+- Xem thông báo cá nhân
+- Thông báo tự động: xác nhận đặt chỗ, thanh toán thành công
+- Đánh dấu đã đọc/xóa thông báo
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### 5. **Lịch sử Sử dụng**
+- Theo dõi thời gian sử dụng máy
+- Lịch sử đặt chỗ và thanh toán
 
-### Code Splitting
+### 👨‍💼 Chức năng dành cho Quản trị viên
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### 1. **Quản lý Máy tính**
+- Thêm/sửa/xóa máy tính
+- Cập nhật trạng thái máy
+- Phân loại theo phòng
 
-### Analyzing the Bundle Size
+#### 2. **Quản lý Đặt chỗ**
+- Xem tất cả đặt chỗ
+- Xác nhận/hủy đặt chỗ
+- Quản lý xung đột
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### 3. **Quản lý Thanh toán**
+- Xem lịch sử thanh toán
+- Xử lý hoàn tiền
+- Báo cáo doanh thu
 
-### Making a Progressive Web App
+#### 4. **Quản lý Thông báo**
+- Gửi thông báo thủ công
+- Gửi thông báo hàng loạt
+- Quản lý lịch sử thông báo
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### 5. **Quản lý Người dùng**
+- Xem danh sách người dùng
+- Quản lý tài khoản và số dư
 
-### Advanced Configuration
+## 🛠️ Công nghệ Sử dụng
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Backend
+- **Node.js** với **Express.js**
+- **MongoDB** với **Mongoose**
+- **CORS** cho cross-origin requests
+- **JWT** cho authentication (nếu có)
 
-### Deployment
+### Frontend
+- **React.js** với **React Router**
+- **Tailwind CSS** cho styling
+- **Axios** cho API calls
+- **React Hooks** cho state management
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Database
+- **MongoDB** collections:
+  - `users` - Thông tin người dùng
+  - `computers` - Danh sách máy tính
+  - `reservations` - Đặt chỗ
+  - `payments` - Thanh toán
+  - `notifications` - Thông báo
+  - `usage_logs` - Lịch sử sử dụng
 
-### `npm run build` fails to minify
+## 🔗 API Endpoints Chính
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Máy tính
+- `GET /api/computers` - Lấy danh sách máy tính
+- `GET /api/computers/:id` - Chi tiết máy tính
+- `POST /api/computers` - Thêm máy tính mới
+- `PUT /api/computers/:id` - Cập nhật máy tính
+- `DELETE /api/computers/:id` - Xóa máy tính
+
+### Đặt chỗ
+- `GET /api/reservations` - Lấy danh sách đặt chỗ
+- `POST /api/reservations` - Tạo đặt chỗ mới
+- `PUT /api/reservations/:id` - Cập nhật đặt chỗ
+- `DELETE /api/reservations/:id` - Xóa đặt chỗ
+
+### Thanh toán
+- `GET /api/payments` - Lấy lịch sử thanh toán
+- `POST /api/payments/process` - Xử lý thanh toán
+
+### Thông báo
+- `GET /api/notifications` - Lấy tất cả thông báo
+- `GET /api/notifications/user/:userId` - Thông báo của user
+- `POST /api/notifications` - Tạo thông báo mới
+- `PUT /api/notifications/:id/read` - Đánh dấu đã đọc
+- `DELETE /api/notifications/:id` - Xóa thông báo
+
+### Người dùng
+- `GET /api/users` - Lấy danh sách người dùng
+
+## 📱 Giao diện Người dùng
+
+### Menu Chính
+- **Trang chủ** - Tổng quan hệ thống
+- **Thông tin máy** - Danh sách máy tính
+- **Package** - Các gói dịch vụ
+- **Đặt chỗ** - Đặt máy tính
+- **Tài khoản** - Quản lý tài khoản người dùng
+- **Thanh toán** - Xử lý thanh toán
+- **Lịch sử** - Lịch sử sử dụng
+- **Thông báo** - Trung tâm thông báo
+
+### Admin Panel
+- `/admin/notifications` - Quản lý thông báo
+
+## 🔧 Cấu trúc Dự án
+
+```
+G4_SDN/
+├── backend/                 # Server-side code
+│   ├── config/             # Database configuration
+│   ├── controllers/        # Business logic
+│   ├── models/            # MongoDB schemas
+│   ├── routes/            # API routes
+│   └── scripts/           # Database seeding
+├── client/                 # Frontend React app
+│   ├── public/            # Static files
+│   ├── src/
+│   │   ├── api/           # API service functions
+│   │   ├── components/    # Reusable components
+│   │   ├── pages/         # Page components
+│   │   ├── routes/        # Routing configuration
+│   │   └── layout/        # Layout components
+│   └── package.json
+└── README.md
+```
+
+## 📊 Use Cases Đã Triển khai
+
+### UC-01: Quản lý Máy tính
+### UC-02: Đặt chỗ Máy tính
+### UC-03: Xử lý Thanh toán
+### UC-04: Quản lý Người dùng
+### UC-08: Quản lý Thông báo ✅ **Đã hoàn thành**
+
+## 🚀 Tính năng Đặc biệt
+
+- **Thông báo Tự động**: Hệ thống tự động gửi thông báo khi có đặt chỗ hoặc thanh toán
+- **Giao diện Responsive**: Tương thích với mobile và desktop
+- **Real-time Updates**: Cập nhật trạng thái máy tính theo thời gian thực
+- **Admin Dashboard**: Giao diện quản trị toàn diện
+- **Notification Center**: Trung tâm thông báo cá nhân hóa
+
+## 📞 Hỗ trợ
+
+Nếu gặp vấn đề khi khởi động hoặc sử dụng hệ thống, vui lòng kiểm tra:
+1. MongoDB đã được khởi động
+2. Port 9999 và 3000 không bị chiếm
+3. Dependencies đã được cài đặt đầy đủ
+4. File cấu hình database chính xác
+
+---
+
+**Phiên bản:** 1.0.0
+**Ngày cập nhật:** 13/11/2025

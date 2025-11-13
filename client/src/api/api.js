@@ -238,6 +238,113 @@ const api = {
       throw error;
     }
   },
+
+  getAllReservations: async (params = {}) => {
+    try {
+      const query = new URLSearchParams(params).toString();
+      const url = query ? `${API_BASE_URL}/reservations?${query}` : `${API_BASE_URL}/reservations`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch reservations');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching reservations:', error);
+      throw error;
+    }
+  },
+
+  updateReservation: async (id, updates) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/reservations/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update reservation');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating reservation:', error);
+      throw error;
+    }
+  },
+
+  getNotificationsByUser: async (userId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/notifications/user/${userId}`);
+      if (!response.ok) throw new Error('Failed to fetch notifications');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      throw error;
+    }
+  },
+
+  createNotification: async (notificationData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/notifications`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(notificationData),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create notification');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error creating notification:', error);
+      throw error;
+    }
+  },
+
+  markNotificationAsRead: async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/notifications/${id}/read`, {
+        method: 'PUT',
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to mark notification as read');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+      throw error;
+    }
+  },
+
+  deleteNotification: async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/notifications/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete notification');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      throw error;
+    }
+  },
+
+  getAllNotifications: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/notifications`);
+      if (!response.ok) throw new Error('Failed to fetch all notifications');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching all notifications:', error);
+      throw error;
+    }
+  },
 };
 
 export default api;

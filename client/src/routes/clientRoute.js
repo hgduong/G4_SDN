@@ -10,6 +10,9 @@ import ReservationPage from "../pages/ReservationPage";
 import PaymentPage from "../pages/PaymentPage";
 import UsageHistoryPage from "../pages/UsageHistoryPage";
 import ServiceOrdersPage from "../pages/ServiceOrdersPage";
+import PackagePage from "../pages/PackagePage";
+import NotificationCenterPage from "../pages/NotificationCenterPage";
+import NotificationManagementPage from "../pages/NotificationManagementPage";
 
 // Route dành cho client (người dùng)
 function ClientRoutes() {
@@ -24,6 +27,9 @@ function ClientRoutes() {
         <Route path="/xu-ly-thanh-toan" element={<PaymentPage />} />
         <Route path="/lich-su-su-dung" element={<UsageHistoryPage />} />
         <Route path="/order" element={<ServiceOrdersPage />} />
+        <Route path="/package" element={<PackagePage />} />
+        <Route path="/notifications" element={<NotificationCenterPage />} />
+        <Route path="/admin/notifications" element={<NotificationManagementPage />} />
       </Routes>
     </Layout>
   );
